@@ -1,23 +1,48 @@
-/* eslint-disable react/prop-types */
-{/* <div>
-    <h1>Title:</h1>
-    <p>Description: </p>
-    <button>Mark as completed</button>
-</div> */}
-function Todo({ todos }) {
-    return (<>
-        {
-            todos.map(function (todo, index) {
-                return (
-                    <div key={index}>
-                        <h1>{todo.title}</h1>
-                        <h2>{todo.description}</h2>
-                        <button>{todo.completed ? "Completed" : "Mark as complete"}</button>
-                    </div>
-                )
-            })
-        }
-    </>
+/* eslint-disable */
+function Todo({ alltodos, setTodos }) {
+    
+    function handleCompletion(id) {
+        console.log("Sending PUT REQUEST");
+        fetch("http://localhost:3000/completed", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id }),
+        }).then(response => {
+            const res = response.json();
+            if (!response.ok) {
+                throw new Error("Failed to update todo");
+            }
+            return res;
+        }).then(updatedTodo => {
+            setTodos(prevTodos =>
+              prevTodos.map(todo =>
+                todo._id === id ? { ...todo, completed: true } : todo
+              )
+            );
+          }).catch(error => {
+            console.error("Error:", error);
+            alert("Failed to mark todo as completed.");
+        });
+    }
+
+    return (
+        <>
+            <div>
+                {alltodos && alltodos.length > 0 ? (
+                    alltodos.map(todo => (
+                        <div key={todo._id}>
+                            <h1>{todo.title}</h1>
+                            <h2>{todo.description}</h2>
+                            <button onClick={() => handleCompletion(todo._id)} disabled={todo.completed}>
+                                {todo.completed ? "Completed" : "Mark as complete"}
+                            </button>
+                        </div>
+                    ))
+                ) : (
+                    <p>No todos available</p>
+                )}
+            </div>
+        </>
     );
 }
 

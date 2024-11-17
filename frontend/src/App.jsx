@@ -25,7 +25,7 @@ function App() {
     // <></>, <React.Fragment></React.Fragment>
     <>
       <CreateTodo />
-      <Todo todos={todos} />
+      <Todo alltodos={todos} setTodos={setTodos} />
     </>
   )
 }
